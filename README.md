@@ -5,14 +5,29 @@ Exposé sur les ports **80** (HTTP) et **443** (HTTPS).
 
 ## Prérequis
 
-- Les DNS de **rally-logistique.cloud** et **www.rally-logistique.cloud** doivent pointer vers l’IP du serveur **avant** de lancer (Let's Encrypt vérifie le domaine).
+- Les DNS des domaines ci-dessous doivent pointer vers l’IP du serveur **avant** de lancer (Let's Encrypt vérifie les domaines).
+- Pour le frontend : construire le build et placer les fichiers dans `public/dist/` (ou adapter le volume dans `docker-compose.yml`).
+
+## URLs (HTTPS)
+
+| Service        | URL                              |
+|----------------|-----------------------------------|
+| Site statique  | https://rally-logistique.cloud    |
+| Frontend      | https://app.rally-logistique.cloud |
+| API Backend   | https://api.rally-logistique.cloud |
+| pgAdmin       | https://pgadmin.rally-logistique.cloud |
+| MinIO (console) | https://minio.rally-logistique.cloud |
+| RabbitMQ (management) | https://rabbitmq.rally-logistique.cloud |
+
+PostgreSQL et Redis sont **internes** (accessibles uniquement entre conteneurs, pas exposés en public).
 
 ## Configuration
 
-Créez un fichier **`.env`** à la racine du projet avec l’email utilisé pour Let's Encrypt (obligatoire) :
+Copiez `.env.example` en `.env` et renseignez toutes les variables (mot de passe, secrets, email Let's Encrypt) :
 
-```env
-LETSENCRYPT_EMAIL=ton-email@exemple.com
+```bash
+cp .env.example .env
+# Éditer .env
 ```
 
 ## Démarrage
@@ -53,7 +68,14 @@ networks:
 
 ## DNS
 
-- Enregistrements **A** (ou **AAAA**) pour `rally-logistique.cloud` et `www.rally-logistique.cloud` vers l’IP du serveur.
+Enregistrements **A** (ou **AAAA**) vers l’IP du serveur pour :
+
+- `rally-logistique.cloud`, `www.rally-logistique.cloud`
+- `app.rally-logistique.cloud`
+- `api.rally-logistique.cloud`
+- `pgadmin.rally-logistique.cloud`
+- `minio.rally-logistique.cloud`
+- `rabbitmq.rally-logistique.cloud`
 
 ## Dépannage
 
