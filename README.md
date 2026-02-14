@@ -14,13 +14,13 @@ Exposé sur les ports **80** (HTTP) et **443** (HTTPS).
 
 ## URLs (HTTPS)
 
-| Service   | URL                              |
-|-----------|-----------------------------------|
-| Site web  | https://rally-logistique.cloud    |
-| Frontend      | https://app.rally-logistique.cloud |
-| API Backend   | https://api.rally-logistique.cloud |
-| pgAdmin       | https://pgadmin.rally-logistique.cloud |
-| MinIO (console) | https://minio.rally-logistique.cloud |
+| Service               | URL                                     |
+| --------------------- | --------------------------------------- |
+| Site web              | https://rally-logistique.cloud          |
+| Frontend              | https://app.rally-logistique.cloud      |
+| API Backend           | https://api.rally-logistique.cloud      |
+| pgAdmin (DB)          | https://db.rally-logistique.cloud       |
+| MinIO (S3)            | https://s3.rally-logistique.cloud       |
 | RabbitMQ (management) | https://rabbitmq.rally-logistique.cloud |
 
 PostgreSQL et Redis sont **internes** (accessibles uniquement entre conteneurs, pas exposés en public).
@@ -40,8 +40,8 @@ cp .env.example .env
 docker compose up -d
 ```
 
-- **HTTP** : http://rally-logistique.cloud  
-- **HTTPS** : https://rally-logistique.cloud  
+- **HTTP** : http://rally-logistique.cloud
+- **HTTPS** : https://rally-logistique.cloud
 
 Au premier démarrage, acme-companion demande les certificats ; le site peut être en HTTP uniquement pendant 1 à 2 minutes.
 
@@ -77,8 +77,8 @@ Enregistrements **A** (ou **AAAA**) vers l’IP du serveur pour :
 - `rally-logistique.cloud`, `www.rally-logistique.cloud`
 - `app.rally-logistique.cloud`
 - `api.rally-logistique.cloud`
-- `pgadmin.rally-logistique.cloud`
-- `minio.rally-logistique.cloud`
+- `db.rally-logistique.cloud`
+- `s3.rally-logistique.cloud`
 - `rabbitmq.rally-logistique.cloud`
 
 ## Dépannage
