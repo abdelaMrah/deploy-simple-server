@@ -30,7 +30,12 @@ services:
     networks:
       - proxy
     depends_on:
-      - proxy
+      proxy:
+        condition: service_started
+      backend:
+        condition: service_started
+      app:
+        condition: service_started
     restart: unless-stopped
 
   # --- Site web : rally-logistique.cloud (code dans ../site) ---
