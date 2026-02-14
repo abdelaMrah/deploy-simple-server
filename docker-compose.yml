@@ -33,24 +33,24 @@ services:
       - proxy
     restart: unless-stopped
 
-  # --- Site statique : rally-logistique.cloud ---
-  web:
-    image: nginx:alpine
-    container_name: rally-web
+  # --- Site web : rally-logistique.cloud (code dans ../site) ---
+  site:
+    build:
+      context: ../site
+      dockerfile: Dockerfile
+    container_name: rally-site
     environment:
       VIRTUAL_HOST: rally-logistique.cloud,www.rally-logistique.cloud
       LETSENCRYPT_HOST: rally-logistique.cloud,www.rally-logistique.cloud
       LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
-    volumes:
-      - ./html:/usr/share/nginx/html:ro
     networks:
       - proxy
     restart: unless-stopped
 
-  # --- Backend API : api.rally-logistique.cloud ---
+  # --- Backend API : api.rally-logistique.cloud (code dans ../logistia-backend) ---
   backend:
     build:
-      context: .
+      context: ../logistia-backend
       dockerfile: Dockerfile
     container_name: rally-backend
     environment:
@@ -83,14 +83,13 @@ services:
       start_period: 30s
     restart: unless-stopped
 
-  # --- Frontend : app.rally-logistique.cloud ---
+  # --- Frontend : app.rally-logistique.cloud (code dans ../logistia-frontend) ---
   app:
-    image: nginx:alpine
+    build:
+      context: ../logistia-frontend
+      dockerfile: Dockerfile
     container_name: rally-app
     restart: always
-    volumes:
-      - ./nginx/app.docker.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./public/dist:/usr/share/nginx/html:ro
     environment:
       VIRTUAL_HOST: app.rally-logistique.cloud
       LETSENCRYPT_HOST: app.rally-logistique.cloud
@@ -182,7 +181,7 @@ services:
       - proxy
       - internal
 
-  # --- Mail server (interne, utilise RabbitMQ) ---
+  # --- Mail server (interne, utilise RabbitMQ, code dans ../mail-server) ---
   mail-server:
     build:
       context: ../mail-server
