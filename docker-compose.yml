@@ -2,6 +2,8 @@ services:
   proxy:
     image: nginxproxy/nginx-proxy
     container_name: rally-nginx-proxy
+    labels:
+      - "com.github.nginx-proxy.nginx=true"
     ports:
       - "80:80"
       - "443:443"
@@ -17,13 +19,14 @@ services:
   acme:
     image: nginxproxy/acme-companion
     container_name: rally-acme
+    volumes_from:
+      - proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs:rw
-      - vhost_d:/etc/nginx/vhost.d
-      - html_acme:/usr/share/nginx/html
     environment:
       DEFAULT_EMAIL: "${LETSENCRYPT_EMAIL}"
+      NGINX_PROXY_CONTAINER: rally-nginx-proxy
     networks:
       - proxy
     depends_on:

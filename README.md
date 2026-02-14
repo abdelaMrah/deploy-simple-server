@@ -57,5 +57,9 @@ networks:
 
 ## Dépannage
 
+- **Port 80 déjà utilisé** : un autre conteneur ou processus utilise le port 80.
+  - Voir quel conteneur : `docker ps --format "table {{.Names}}\t{{.Ports}}"`
+  - Ancien conteneur **rally-nginx** (ancienne config) : `docker stop rally-nginx && docker rm rally-nginx`, puis `docker compose up -d`.
+  - Sinon : `docker compose down` dans le projet concerné, ou `docker stop <nom_conteneur>`, puis relancer.
 - Certificat non créé : vérifier les logs avec `docker compose logs acme`.
 - Vérifier que le port 443 est ouvert (pare-feu) et que le DNS pointe bien vers le serveur.
