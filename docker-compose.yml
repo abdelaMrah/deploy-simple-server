@@ -27,6 +27,7 @@ services:
     environment:
       DEFAULT_EMAIL: "${LETSENCRYPT_EMAIL}"
       NGINX_PROXY_CONTAINER: rally-nginx-proxy
+      DEBUG: "1"
     networks:
       - proxy
     depends_on:
