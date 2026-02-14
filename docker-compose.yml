@@ -4,9 +4,29 @@ services:
     container_name: rally-nginx-proxy
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs:ro
+      - vhost_d:/etc/nginx/vhost.d
+      - html_acme:/usr/share/nginx/html
     networks:
+      - proxy
+    restart: unless-stopped
+
+  acme:
+    image: nginxproxy/acme-companion
+    container_name: rally-acme
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs:rw
+      - vhost_d:/etc/nginx/vhost.d
+      - html_acme:/usr/share/nginx/html
+    environment:
+      DEFAULT_EMAIL: "${LETSENCRYPT_EMAIL}"
+    networks:
+      - proxy
+    depends_on:
       - proxy
     restart: unless-stopped
 
@@ -15,11 +35,18 @@ services:
     container_name: rally-web
     environment:
       VIRTUAL_HOST: rally-logistique.cloud,www.rally-logistique.cloud
+      LETSENCRYPT_HOST: rally-logistique.cloud,www.rally-logistique.cloud
+      LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
     volumes:
       - ./html:/usr/share/nginx/html:ro
     networks:
       - proxy
     restart: unless-stopped
+
+volumes:
+  certs:
+  vhost_d:
+  html_acme:
 
 networks:
   proxy:
