@@ -6,13 +6,17 @@ Exposé sur les ports **80** (HTTP) et **443** (HTTPS).
 ## Prérequis
 
 - Les DNS des domaines ci-dessous doivent pointer vers l’IP du serveur **avant** de lancer (Let's Encrypt vérifie les domaines).
-- Pour le frontend : construire le build et placer les fichiers dans `public/dist/` (ou adapter le volume dans `docker-compose.yml`).
+- Structure des dépôts : ce projet (`deploy-simple-server`) doit être au même niveau que les 4 applications, chacune avec son propre `Dockerfile` :
+  - **Site** : `../site` → https://rally-logistique.cloud
+  - **Backend** : `../logistia-backend` → https://api.rally-logistique.cloud
+  - **Frontend** : `../logistia-frontend` → https://app.rally-logistique.cloud
+  - **Mail server** : `../mail-server` (interne)
 
 ## URLs (HTTPS)
 
-| Service        | URL                              |
-|----------------|-----------------------------------|
-| Site statique  | https://rally-logistique.cloud    |
+| Service   | URL                              |
+|-----------|-----------------------------------|
+| Site web  | https://rally-logistique.cloud    |
 | Frontend      | https://app.rally-logistique.cloud |
 | API Backend   | https://api.rally-logistique.cloud |
 | pgAdmin       | https://pgadmin.rally-logistique.cloud |
