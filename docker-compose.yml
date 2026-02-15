@@ -88,11 +88,12 @@ services:
       - proxy
       - internal
     healthcheck:
+      # Le backend doit répondre 2xx sur GET /api ou GET /api/health. Sinon adapter le path (ex. /api/health).
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:4000/api"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     restart: unless-stopped
 
   # --- Frontend : app.rally-logistique.cloud (code dans ../logistia-frontend) ---
