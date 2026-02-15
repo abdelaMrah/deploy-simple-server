@@ -56,6 +56,8 @@ docker compose down
 - **proxy** : nginx-proxy sur 80 et 443, sert les certificats et route le trafic.
 - **acme** : acme-companion (Certbot) obtient et renouvelle les certificats Let's Encrypt pour les conteneurs qui ont `LETSENCRYPT_HOST` et `LETSENCRYPT_EMAIL`.
 - **site** : site web avec `VIRTUAL_HOST` + `LETSENCRYPT_HOST` pour rally-logistique.cloud.
+- **app + /api** : le domaine `app.rally-logistique.cloud` sert le frontend sur `/` et proxifie `/api` vers le backend (config dans `nginx/vhost.d/`). Le frontend utilise `baseURL: "/api"`, donc les appels API passent par le même domaine.  
+  Si vous changez `APP_VIRTUAL_HOST`, renommez le fichier dans `nginx/vhost.d/` en `<votre_domaine>_location_override`.
 
 ## Ajouter un service en HTTPS
 

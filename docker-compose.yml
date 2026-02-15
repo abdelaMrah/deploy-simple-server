@@ -10,7 +10,7 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - certs:/etc/nginx/certs:ro
-      - vhost_d:/etc/nginx/vhost.d
+      - ./nginx/vhost.d:/etc/nginx/vhost.d:ro
       - html_acme:/usr/share/nginx/html
     networks:
       - proxy
@@ -60,9 +60,9 @@ services:
       dockerfile: Dockerfile
     container_name: rally-backend
     environment:
-      VIRTUAL_HOST: api.rally-logistique.cloud
+      VIRTUAL_HOST: ${API_VIRTUAL_HOST}
       VIRTUAL_PORT: "4000"
-      LETSENCRYPT_HOST: api.rally-logistique.cloud
+      LETSENCRYPT_HOST: ${API_VIRTUAL_HOST}
       LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
       NODE_ENV: "${NODE_ENV}"
       PORT: "${PORT:-4000}"
@@ -97,8 +97,8 @@ services:
     container_name: rally-app
     restart: always
     environment:
-      VIRTUAL_HOST: app.rally-logistique.cloud
-      LETSENCRYPT_HOST: app.rally-logistique.cloud
+      VIRTUAL_HOST: ${APP_VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${APP_VIRTUAL_HOST}
       LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
     networks:
       - proxy
@@ -133,8 +133,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL}"
       PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD}"
-      VIRTUAL_HOST: db.rally-logistique.cloud
-      LETSENCRYPT_HOST: db.rally-logistique.cloud
+      VIRTUAL_HOST: ${DB_VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${DB_VIRTUAL_HOST}
       LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
     networks:
       - proxy
@@ -177,9 +177,9 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER:-guest}"
       RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD:-guest}"
-      VIRTUAL_HOST: rabbitmq.rally-logistique.cloud
+      VIRTUAL_HOST: ${RABBITMQ_VIRTUAL_HOST}
       VIRTUAL_PORT: "15672"
-      LETSENCRYPT_HOST: rabbitmq.rally-logistique.cloud
+      LETSENCRYPT_HOST: ${RABBITMQ_VIRTUAL_HOST}
       LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
@@ -206,7 +206,6 @@ volumes:
   minio_data:
   rabbitmq_data:
   certs:
-  vhost_d:
   html_acme:
 
 networks:
