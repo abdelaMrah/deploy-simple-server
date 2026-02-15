@@ -75,6 +75,8 @@ services:
       MINIO_SECRET_KEY: "${MINIO_ROOT_PASSWORD}"
       MINIO_BUCKET_NAME: "${MINIO_BUCKET_NAME:-uploads}"
       MINIO_REGION: "${MINIO_REGION:-us-east-1}"
+    ports:
+      - "${API_VIRTUAL_PORT}:${API_VIRTUAL_PORT}"
     depends_on:
       logistique-db:
         condition: service_healthy
