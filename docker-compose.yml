@@ -54,6 +54,8 @@ services:
     restart: unless-stopped
 
   # --- Backend API : api.rally-logistique.cloud (code dans ../logistia-backend) ---
+  # L'API est exposée en HTTPS sur le port 443 uniquement via nginx-proxy (pas sur le port 4000).
+  # URLs : https://api.rally-logistique.cloud ou https://app.rally-logistique.cloud/api
   backend:
     build:
       context: ../logistia-backend
@@ -75,8 +77,10 @@ services:
       MINIO_SECRET_KEY: "${MINIO_ROOT_PASSWORD}"
       MINIO_BUCKET_NAME: "${MINIO_BUCKET_NAME:-uploads}"
       MINIO_REGION: "${MINIO_REGION:-us-east-1}"
-    ports:
-      - "${API_VIRTUAL_PORT}:${API_VIRTUAL_PORT}"
+    # Ne pas exposer le port 4000 sur l'hôte : l'API est consommée en HTTPS (port 443) via le proxy.
+    # Décommenter la ligne ci‑dessous pour accès direct HTTP en debug (optionnel).
+    # ports:
+    #   - "${API_VIRTUAL_PORT:-4000}:4000"
     depends_on:
       logistique-db:
         condition: service_healthy
