@@ -59,6 +59,15 @@ docker compose down
 - **app + /api** : le domaine `app.rally-logistique.cloud` sert le frontend sur `/` et proxifie `/api` vers le backend (config dans `nginx/vhost.d/`). Le frontend utilise `baseURL: "/api"`, donc les appels API passent par le même domaine.  
   Si vous changez `APP_VIRTUAL_HOST`, renommez le fichier dans `nginx/vhost.d/` en `<votre_domaine>_location_override`.
 
+### Consommer l’API en HTTPS depuis le frontend
+
+L’API n’est **pas** exposée sur un port HTTPS dédié (443 est utilisé par nginx-proxy pour tous les domaines). Elle est accessible en HTTPS de deux façons :
+
+1. **Même origine (recommandé)** : depuis l’app à `https://app.rally-logistique.cloud`, le frontend appelle `baseURL: "/api"`. Les requêtes partent en **HTTPS** vers `https://app.rally-logistique.cloud/api`, puis nginx-proxy transmet en HTTP au backend. Aucune configuration supplémentaire côté frontend.
+2. **Sous-domaine API** : `https://api.rally-logistique.cloud` (port 443). Utile pour des clients externes ou des appels directs.
+
+Le backend ne doit **pas** être exposé sur le port 4000 de l’hôte pour la prod ; l’accès se fait uniquement via le proxy (80/443). Les fichiers dans `nginx/vhost.d/*_location_override` (app et api) assurent le proxy et les en-têtes `X-Forwarded-Proto`.
+
 ## Ajouter un service en HTTPS
 
 Sur chaque conteneur à exposer en HTTPS :
@@ -78,7 +87,7 @@ Enregistrements **A** (ou **AAAA**) vers l’IP du serveur pour :
 
 - `rally-logistique.cloud`, `www.rally-logistique.cloud`
 - `app.rally-logistique.cloud`
-- `api.rally-logistique.cloud`
+- `api.rally-logistique.cloud` (si vous changez `API_VIRTUAL_HOST`, renommez `nginx/vhost.d/api.rally-logistique.cloud_location_override` en `<votre_domaine>_location_override`)
 - `db.rally-logistique.cloud`
 - `s3.rally-logistique.cloud`
 - `rabbitmq.rally-logistique.cloud`
