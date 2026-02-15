@@ -124,6 +124,11 @@ Enregistrements **A** (ou **AAAA**) vers l’IP du serveur pour :
   4. **Script de diagnostic** (sur le serveur) : `sh scripts/force-ssl-app-api.sh` pour lister les certs, redémarrer acme et afficher les logs.
   5. **Pare-feu** : les ports 80 et 443 doivent être ouverts depuis Internet (Let's Encrypt utilise le port 80 pour la validation HTTP-01).
   6. Si le frontend écoute sur un port autre que 80 (ex. 3000), ajouter dans le service `app` : `VIRTUAL_PORT: "3000"`.
+- **Backend « unhealthy »** : le healthcheck appelle `GET http://localhost:4000/api` dans le conteneur. Il doit recevoir une réponse **2xx**. Si le backend renvoie 401, 404 ou 5xx sur `/api`, le conteneur reste marqué unhealthy.
+  1. Vérifier la réponse du backend : `docker exec rally-backend wget -q -O- --spider http://localhost:4000/api ; echo "Exit: $?"` (0 = succès).
+  2. Si votre API n’expose pas de route GET `/api` qui renvoie 2xx, soit ajouter une route de santé (ex. GET `/api/health` qui renvoie 200), soit adapter le healthcheck dans `docker-compose.yml` (remplacer `/api` par le path qui convient, ex. `/api/health`).
+  3. Vérifier les logs du backend : `docker compose logs backend` (erreurs DB, Redis, RabbitMQ, etc.).  
+  4. Script de diagnostic : `sh scripts/check-backend-health.sh` (teste GET /api et affiche les logs).
 - Certificat non créé : vérifier les logs avec `docker compose logs acme`.
 - Vérifier que le port 443 est ouvert (pare-feu) et que le DNS pointe bien vers le serveur.
 
