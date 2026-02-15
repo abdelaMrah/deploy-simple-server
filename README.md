@@ -98,6 +98,13 @@ Enregistrements **A** (ou **AAAA**) vers l’IP du serveur pour :
   - Voir quel conteneur : `docker ps --format "table {{.Names}}\t{{.Ports}}"`
   - Ancien conteneur **rally-nginx** (ancienne config) : `docker stop rally-nginx && docker rm rally-nginx`, puis `docker compose up -d`.
   - Sinon : `docker compose down` dans le projet concerné, ou `docker stop <nom_conteneur>`, puis relancer.
+- **Chrome : « This website sent back unusual and incorrect credentials » / HSTS** : le navigateur refuse la connexion car le **certificat TLS servi pour ce domaine ne correspond pas** (certificat par défaut, autre domaine, ou certificat manquant). À faire **sur le serveur** ou depuis une machine où le DNS pointe vers le serveur :
+  1. Vérifier quel certificat est servi : `sh scripts/check-cert-app.sh` (voir ci‑dessous).
+  2. Si le sujet du certificat n'est pas `app.rally-logistique.cloud`, les certificats Let's Encrypt pour ce domaine n'ont pas été délivrés ou ne sont pas utilisés. Suivre les étapes du paragraphe « app ou api accessibles seulement en HTTP » (DNS, présence des fichiers dans `/etc/nginx/certs/`, redémarrage de `acme`).
+  3. Redémarrer le proxy pour recharger les certificats : `docker compose restart proxy acme`, attendre 2–3 minutes puis réessayer dans le navigateur.
+  4. En dernier recours, supprimer les certificats du volume et laisser acme les recréer (attention : coupure HTTPS temporaire) :  
+     `docker compose down` puis sur l'hôte :  
+     `docker volume inspect deploy-simple-server_certs --format '{{ .Mountpoint }}'` (adapter le préfixe du projet), puis supprimer les fichiers `app.rally-logistique.cloud.*` dans ce répertoire. Ensuite `docker compose up -d` et attendre la délivrance des nouveaux certificats.
 - **app ou api accessibles seulement en HTTP (pas HTTPS)** : les certificats Let's Encrypt pour ces domaines n’ont pas été délivrés.
   1. **DNS** : sur le serveur, vérifier la résolution :
      ```bash
@@ -119,3 +126,5 @@ Enregistrements **A** (ou **AAAA**) vers l’IP du serveur pour :
   6. Si le frontend écoute sur un port autre que 80 (ex. 3000), ajouter dans le service `app` : `VIRTUAL_PORT: "3000"`.
 - Certificat non créé : vérifier les logs avec `docker compose logs acme`.
 - Vérifier que le port 443 est ouvert (pare-feu) et que le DNS pointe bien vers le serveur.
+
+**Script `scripts/check-cert-app.sh`** : affiche le certificat TLS réellement servi pour `app.rally-logistique.cloud` (subject, issuer, dates). Permet de confirmer si le mauvais certificat est servi. Usage : `sh scripts/check-cert-app.sh` ou `sh scripts/check-cert-app.sh api.rally-logistique.cloud` pour l’API.
