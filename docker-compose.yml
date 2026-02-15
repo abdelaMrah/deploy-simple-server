@@ -71,7 +71,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@logistique-db:5432/${POSTGRES_DB}?schema=public
       JWT_SECRET: "${JWT_SECRET}"
       REDIS_URL: "redis://redis:6379"
-      RABBITMQ_URI: "amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672"
+      RABBITMQ_URI: "amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@localhost:5672"
       MINIO_ENDPOINT: "http://minio:9000"
       MINIO_ACCESS_KEY: "${MINIO_ROOT_USER}"
       MINIO_SECRET_KEY: "${MINIO_ROOT_PASSWORD}"
